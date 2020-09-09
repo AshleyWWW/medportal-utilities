@@ -1,9 +1,11 @@
 let events_this_week = [];
 
 function formatEventsList(prep_only) {
-    let text = "";
+    const DIVIDER = "\n\n-----------------------------------------------\n\n";
     let fields = ['Title', 'Tags', 'Date', 'Meeting Link', 'Prep', 'Session Notes', 'Url'];
 	let today = new Date();
+    let text = "Generated on: " + today.toLocaleString() + DIVIDER;
+
     for (let i = events_this_week.length - 1; i >= 0; --i) {
 		if (prep_only && (today > new Date(events_this_week[i]['StartUtc']) || !events_this_week[i]['Prep'] || events_this_week[i]['Prep'] == 'There is no required preparation for this session.')) { 
             continue; 
@@ -11,7 +13,7 @@ function formatEventsList(prep_only) {
         for (let j = 0; j < fields.length; ++j) {
             text += fields[j] + ': ' + events_this_week[i][fields[j]] + '\n';
         }
-        text += "\n\n-----------------------------------------------\n\n";
+        text += DIVIDER;
     }
     console.log(text);
 }
