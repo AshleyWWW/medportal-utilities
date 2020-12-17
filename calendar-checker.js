@@ -1,6 +1,11 @@
 let events_this_week = [];
+let exclusion_tags = ['TTC', 'CARMS', 'IF', 'PC IF'];
 
-function formatEventsList(prep_only) {
+function is_c2022(evt) {
+	return evt['Tags'].some(r => exclusion_tags.includes(r))
+}
+
+function formatEventsList(prep_only, filter) {
     const DIVIDER = "\n\n-----------------------------------------------\n\n";
     let fields = ['Title', 'Tags', 'Date', 'Meeting Link', 'Prep', 'Session Notes', 'Url'];
 	let today = new Date();
@@ -9,7 +14,9 @@ function formatEventsList(prep_only) {
     for (let i = events_this_week.length - 1; i >= 0; --i) {
 		if (prep_only && (today > new Date(events_this_week[i]['StartUtc']) || !events_this_week[i]['Prep'] || events_this_week[i]['Prep'] == 'There is no required preparation for this session.')) { 
             continue; 
-        }
+        } else if (filter && filter(events_this_week[i])) {
+			continue;
+		}
         for (let j = 0; j < fields.length; ++j) {
             text += fields[j] + ': ' + events_this_week[i][fields[j]] + '\n';
         }
@@ -53,7 +60,7 @@ function parseCalendar(url) {
             events_this_week[index] = event;
 
             if (done_sending && ongoing === 0) {
-                formatEventsList();
+                formatEventsList(false, is_c2022);
             }
         });
     }
@@ -64,4 +71,4 @@ function parseCalendar(url) {
     });
 }
 
-parseCalendar("https://www.medportal.ca/RestApi/sessions?page=1&skip=0&take=100&pageSize=100&start=%222020-07-26T04%3A00%3A00.000Z%22&end=%222020-12-31T04%3A00%3A00.000Z%22&searchtext=&mode=Month&resources=%5B%7B%22text%22%3A%22Academic+Session%22%2C%22value%22%3A%22Telerik.Sitefinity.DynamicTypes.Model.Session.AcademicSessionDate%22%2C%22color%22%3A%22%2351a0ed%22%7D%2C%7B%22text%22%3A%22Procomp+Session%22%2C%22value%22%3A%22Telerik.Sitefinity.DynamicTypes.Model.Session.Procompsessiondate%22%2C%22color%22%3A%22%2366bb6a%22%7D%5D&filterexpression=&format=json");
+parseCalendar("https://www.medportal.ca/RestApi/sessions?page=1&skip=0&take=100&pageSize=100&start=%222020-12-01T04%3A00%3A00.000Z%22&end=%222021-04-01T04%3A00%3A00.000Z%22&searchtext=&mode=Month&resources=%5B%7B%22text%22%3A%22Academic+Session%22%2C%22value%22%3A%22Telerik.Sitefinity.DynamicTypes.Model.Session.AcademicSessionDate%22%2C%22color%22%3A%22%2351a0ed%22%7D%2C%7B%22text%22%3A%22Procomp+Session%22%2C%22value%22%3A%22Telerik.Sitefinity.DynamicTypes.Model.Session.Procompsessiondate%22%2C%22color%22%3A%22%2366bb6a%22%7D%5D&filterexpression=&format=json");
