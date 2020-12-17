@@ -10,3 +10,7 @@
 ```javascript
 formatEventsList(true)
 ```
+8. (Optional) If you only want to see entries that have prep information, and are not for c2022, use: 
+```javascript
+formatEventsList(true, is_c2022)
+```
